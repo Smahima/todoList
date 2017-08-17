@@ -10,9 +10,24 @@
       <button type="submit" name="button">Add New To Do</button>
     </form>
     <br>
+
     {{#tasks}}
-      <form class="" action="" method="post">
+    {{^done}}
+    <form class="stillToDo" action="/" method="post">
+      <button type="submit" name="button">Mark Complete</button>
+      {{text}}
+    </form>
+    {{/done}}
     {{/tasks}}
-      </form>
+    {{#tasks}}
+    {{#done}}
+    <form class="completed" action="/" method="post">
+    <ul>
+    <h3>Completed</h3>
+    {{text}}</ul>
+    </form>
+    {{/done}}
+    {{/tasks}}
+
   </body>
 </html>
