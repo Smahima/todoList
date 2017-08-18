@@ -49,7 +49,7 @@ app.post("/", function (req, res) {
   let list = {
     'text': newestTask,
     'done': false,
-    'id': max + 1
+    'id': maxId + 1
     }
     tasks.push(list);
     res.redirect('/');
@@ -63,7 +63,7 @@ app.post('/:id', function (res, req) {
         moveToComplete.id = true;
       }
     })
-    res.render('index.mustache', myData)
+    res.render('index.mustache', tasks)
 })
 
 app.listen(3000, function(){
