@@ -2,34 +2,42 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mustacheExpress = require('mustache-express');
 const expressValidator = require('express-validator');
-const tasks = [{
-    'text': "Laundry",
-    'done': true,
-    'id': 1
-  },
-  {
-    'text': "Clean apt",
-    'done': false,
-    'id': 2
-  },
-  {
-    'text': "Make money",
-    'done': false,
-    'id': 3
-  },
-  {
-    'text': "Meet Matt Damon",
-    'done': false,
-    'id': 4
-  },
-  {
-    'text': "Marry Matt Damon",
-    'done': false,
-    'id': 5
-  },
-]
-
 const app = express();
+// const tasks = [{
+//     'text': "Laundry",
+//     'done': true,
+//     'id': 1
+//   },
+//   {
+//     'text': "Clean apt",
+//     'done': false,
+//     'id': 2
+//   },
+//   {
+//     'text': "Make money",
+//     'done': false,
+//     'id': 3
+//   },
+//   {
+//     'text': "Meet Matt Damon",
+//     'done': false,
+//     'id': 4
+//   },
+//   {
+//     'text': "Marry Matt Damon",
+//     'done': false,
+//     'id': 5
+//   },
+// ]
+
+const MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+
+// Connection URL
+const url = 'mongodb://localhost:27017/todo';
+
+let database;
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
@@ -41,17 +49,19 @@ app.set('views', './views');
 app.set('view engine', 'mustache')
 
 app.get("/", function(req, res) {
-  console.log("get called");
-  res.render('index.mustache', {"tasks": tasks}
-  );
+  let collection = database.collection('todos');
+  collection.find({}).toArray(function(err, todo) {
+     console.log("my todos");
+     res.render('index', {todos:todo});
+  });
 })
-
 app.post("/", function(req, res) {
   console.log("post called");
   console.log(req.body);
   if (req.body.id) {
     markCompleted(req.body.id);
-  } else {
+  }
+  else {
     //console.log("id: " + req.param.id);
     let maxId = tasks.length
     const newestTask = req.body.newTask
@@ -60,12 +70,12 @@ app.post("/", function(req, res) {
       'done': false,
       'id': maxId + 1
     }
-    tasks.push(list);
+    // tasks.push(list);
+    // let collection = database.collection('todos');
   }
   res.redirect('/');
 })
 
-// Make the button a click event? addeventListener
 function markCompleted(id) {
   console.log("updating task: " + id);
   for (let i = 0; i < tasks.length; i++) {
@@ -73,19 +83,23 @@ function markCompleted(id) {
       console.log("updating task: " + tasks[i].id);
       tasks[i].done = true;
     }
-    //console.log(tasks[i].done);
   }
 }
 
-  // tasks.push(completed);
-  // res.redirect('/');
-  // body.insert(completed)?
-  // what am I missing? After the mark complete button is pressed, the item needs to
-  // move to the complete section.
-  //   completedTasks( function() {
-  //   return Tasks.completed('completed',{completed: true});
-  // }
-//
 app.listen(3000, function() {
   console.log('Ciao');
 })
+
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected successfully to mongodb");
+  database = db;
+});
+
+process.on('SIGINT', function() {
+  console.log("\nshutting down");
+  database.close(function () {
+    console.log('mongodb disconnected on app termination');
+    process.exit(0);
+  });
+});
