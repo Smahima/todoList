@@ -30,8 +30,8 @@ const app = express();
 //   },
 // ]
 
-const MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
+const MongoClient = require('mongodb').MongoClient,
+  assert = require('assert');
 
 // Connection URL
 const url = 'mongodb://localhost:27017/todo';
@@ -51,8 +51,8 @@ app.set('view engine', 'mustache')
 app.get("/", function(req, res) {
   let collection = database.collection('todos');
   collection.find({}).toArray(function(err, todo) {
-     console.log("my todos");
-     res.render('index', {todos:todo});
+    console.log("my todos");
+    res.render('index', {todos: todo});
   });
 })
 app.post("/", function(req, res) {
@@ -61,8 +61,8 @@ app.post("/", function(req, res) {
   if (req.body.id) {
     markCompleted(req.body.id);
   }
+  // tasks isn't defined? remove this?
   else {
-    //console.log("id: " + req.param.id);
     let maxId = tasks.length
     const newestTask = req.body.newTask
     let list = {
@@ -71,10 +71,17 @@ app.post("/", function(req, res) {
       'id': maxId + 1
     }
     // tasks.push(list);
-    // let collection = database.collection('todos');
-  }
-  res.redirect('/');
-})
+    let collection = database.collection('todos');
+    collection.find({}).toArray(function(err, todo) {
+      collection.insertOne([{}], function(err, todo) {
+        console.log("new task");
+          res.render('index', {todos: todo});
+        };
+      });
+    })
+  })  
+  // res.redirect('/');
+
 
 function markCompleted(id) {
   console.log("updating task: " + id);
@@ -98,7 +105,7 @@ MongoClient.connect(url, function(err, db) {
 
 process.on('SIGINT', function() {
   console.log("\nshutting down");
-  database.close(function () {
+  database.close(function() {
     console.log('mongodb disconnected on app termination');
     process.exit(0);
   });
