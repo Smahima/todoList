@@ -1,37 +1,31 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-  <meta charset="utf-8">
-  <title>ToDoList</title>
-</head>
-
-<body>
-  <form class="tasks" action="/" method="post">
-    <input type="text" name="newTask" value="">
-    <button type="submit" name="button">Add New To Do</button>
-  </form>
-  <br>
-  {{#tasks}}
+  <head>
+    <meta charset="utf-8">
+    <title>ToDoList</title>
+  </head>
+  <body>
+    <form class="tasks" action="/" method="post">
+      <input type="text" name="newTask" value="">
+      <button type="submit" name="button">Add New To Do</button>
+    </form>
+    <br>
+    {{#tasks}}
     {{^done}}
     <form class="stillToDo" action="/" method="post">
-      <input type="hidden" name="id" value="{{id}}">
-      <button type="submit" name="button">Mark Complete</button>
+    <button type="submit" name="button">Mark Complete</button>
       {{text}}
     </form>
     {{/done}}
-  {{/tasks}}
-  <!-- Do I need a separate div, but differnce would that make? -->
-  {{#tasks}}
+    {{/tasks}}
+    {{#tasks}}
     {{#done}}
-      <form class="completed" action="/" method="post">
-        <ul>
-          <h3>Completed</h3>
-          {{text}}
-        </ul>
-      </form>
+    <form class="completed" action="/" method="post">
+    <ul>
+    <h3>Completed</h3>
+    {{text}}</ul>
+    </form>
     {{/done}}
-  {{/tasks}}
-</body>
-
+    {{/tasks}}
+  </body>
 </html>
