@@ -29,15 +29,13 @@ const tasks = [{
     'done': false,
     'id': 5
   },
-]
+];
 
 // const MongoClient = require('mongodb').MongoClient,
 //   assert = require('assert');
 //
 // // Connection URL
 // const url = 'mongodb://localhost:27017/todo';
-//
-// let database;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -59,8 +57,7 @@ app.post("/", function(req, res) {
  if (req.body.id) {
      markCompleted(req.body.id);
    }
-   else
-   {  let maxId = tasks.length
+    else { let maxId = tasks.length
      const newestTask = req.body.newTask
      let list = {
        'text': newestTask,
@@ -68,7 +65,8 @@ app.post("/", function(req, res) {
       'id': maxId + 1
     }
     res.redirect('/');
-  }
+  };
+})
 
 function markCompleted(id) {
      console.log("updating task: " + id);
@@ -80,15 +78,14 @@ function markCompleted(id) {
      }
    }
 
-// app.post('/:id', function (res, req) {
-//     let id = parseInt(req.param.id);
-//
-//     tasks.forEach(function moveToComplete() {
-//       if (id === moveToComplete.id) {
-//         moveToComplete.id = true;
-//       }
-//     })
-//     res.render('index.mustache', tasks)
+app.post('/:id', function (res, req) {
+    let id = parseInt(req.param.id);
+    tasks.forEach(function moveToComplete() {
+      if (id === moveToComplete.id) {
+        moveToComplete.id = true;
+      }
+    })
+    res.render('index.mustache', tasks)
 })
 
 app.listen(3000, function(){
